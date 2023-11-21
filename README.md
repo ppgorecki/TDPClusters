@@ -2,7 +2,10 @@
 # TDP Clusters
 
 Software for computing lower and upper bounds for the k-separator problem.
-See https://doi.org/10.1093/jrsssb/qkad067
+
+Cluster extent inference revisited: quantification and localisation of brain activity 
+Jelle J Goeman, Paweł Górecki, Ramin Monajemi, Xu Chen, Thomas E Nichols, Wouter Weeda,
+Journal of the Royal Statistical Society Series B: Statistical Methodology, Volume 85, Issue 4, September 2023, Pages 1128–1153, https://doi.org/10.1093/jrsssb/qkad067
 
 ## Directories 
 
@@ -39,7 +42,7 @@ separated by the middle column (row). See [square.tsv](data/square.tsv) in data 
 
 Another example is in the article on Figure 2. See [figure2.tsv](data/figure2.tsv) in the data directory.
 
-To test it with `fgreedy` execute from the command line in `upperbounds` directory after compilation with `make`:
+Run `fgreedy` the command line after compilation with `make`:
 ```
 cd upperbounds && make && cd ../data
 ../upperbounds/fgreedy figure2.tsv -k10 -T4
@@ -56,9 +59,10 @@ totaltime_sec:4.000
 outpufiles:fgreedy.log;fgreedy.tsv
 ```
 
-Here, `-T4` sets the global running time to 4 seconds. The inferred k-separator has the size of 23 and the detailed clustering with separator is in the default output file [fgreedy.tsv](data/fgreedy.tsv).
+Here, the global running time is set to 4 seconds using `-T4`. The inferred k-separator has a size of 23 and the detailed clustering with separator is available in the default output file [fgreedy.tsv](data/fgreedy.tsv). 
+For more advanced usage, refer to additional sections.
 
-To visualize the output from [fgreedy.tsv](data/fgreedy.tsv) in a browser use `pl3d.py` from `plot` directory.
+To interactively visualize the output from [fgreedy.tsv](data/fgreedy.tsv) in a browser use `pl3d.py` from the `plot` directory.
 ```
 python3 ../plot/pl3d.py
 ```
@@ -85,37 +89,41 @@ Run `make` to compile `fgreedy`.
 
 ## Input files 
 
-A single input file is a tsv/csv 3-5-column file:
+A single input file is a tsv/csv with 3-5-columns:
 
- - columns 1-3 are X Y Z coordinates of each voxel,
+ - columns 1-3 represents X, Y, Z coordinates of each voxel,
 
- - column 4 (optional) denotes division, where 0 is a separator voxel,
-      and a positive integer denotes a cluster id
+ - column 4 (optional) indicates division, where 0 is a separator voxel,
+      and   positive integers denote cluster IDs
 
- - column 5 (optional, ignored in input) an integer denoting connected component id
+ - column 5 (optional and ignored in input) is an integer representing a connected component ID
 
- - lines with occurences of x, y or z are ignored
+Lines containing occurences of x, y or, z are ignored. 
 
-See examples in ![data directory](/data)
-
-### The k parameter = the max size of a cluster
-
-The parameter k can be set by using:
-
-- `-k NUMBER` in `fgreedy` 
-- or, by extracting k directly from csv/tsv file name by locating pattern `kvalNUMBER` or `kNUMBER`  e.g., `id1002_kfix_neg_clusterindex10_clustersize256_kval14.csv` gives `k=14`, `k90.csv` gives `k=90`.
-
-Setting with `-k` has higher priority. 
-The second variant is required for executing `batch7.sh`. 
-
-Run `fgreedy` on `k90.csv` with with `k=90`.
-```
-./fgreedy k90.csv -x batch7.cnf
-```
+See examples in [data directory](/data).
 
 ### Config files (.cnf) 
 
-They contain parameters and rules for the heuristic runs. We recommend using `batch7.cnf` attached to the repository. Add `-x batch7.cnf` to the command of `fgreedy`.
+The configuration files (.cnf) contain parameters and rules essential for heuristic runs. We recommend to utilize the provided `batch7.cnf` file from the repository. To integrate this configuration into the `fgreedy` command, append `-x batch7.cnf` to the command line.
+
+### The k parameter = the max size of a cluster
+
+The parameter k can be set by using `-k NUMBER` or by extracting k directly from csv/tsv file name by locating pattern `kvalNUMBER` or `kNUMBER`  e.g., `id1002_kfix_neg_clusterindex10_clustersize256_kval14.csv` gives `k=14`, `k90.csv` gives `k=90`.
+If the `-k` option is used to explicitly set the value of k, it takes precedence over any value extracted from the filename.
+
+For example:
+```
+./fgreedy k90.csv -x batch7.cnf
+```
+This command runs fgreedy on the input file `k90.csv` with a specified value of `k=90`. 
+
+However, in 
+```
+./fgreedy k90.csv -x batch7.cnf -k8
+```
+The value of k is set to 8.
+
+
 
 ### Output file
 
