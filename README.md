@@ -27,7 +27,7 @@ Other directories:
 
 Consider a set *V* of voxels from in *Z<sup>3</sup>*, where *Z* is the set of integers. Two distinct voxels *v* and *w* are neighbors if the vector *v-w* belongs to the set *{-1, 0, 1}<sup>3</sup>*. This structure is recognized as a 26-connectivity graph on V.
 
-The Fgreedy heuristic estimates upper bounds for the following problem:
+The Fgreedy heuristic estimates upper bounds, called in the software **minscores**, for the following problem:
 
 **Given**: A collection of voxels *V* in *Z<sup>3</sup>* and a positive integer *k*.
 
