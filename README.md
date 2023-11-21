@@ -22,11 +22,11 @@ Other directories:
 
 ## Problem definition 
 
-Consider a set *V* of voxels from in *Z<sup>3</sup>*, where *Z* is the set of integers. Two distinct voxels *v* and *w* are neighbors if the vector *v-w* belongs to the set *{-1, 0, 1}^3*. This structure is recognized as a 26-connectivity graph on V.
+Consider a set *V* of voxels from in *Z<sup>3</sup>*, where *Z* is the set of integers. Two distinct voxels *v* and *w* are neighbors if the vector *v-w* belongs to the set *{-1, 0, 1}<sup>3</sup>*. This structure is recognized as a 26-connectivity graph on V.
 
 The Fgreedy heuristic estimates upper bounds for the following problem:
 
-**Given**: A collection of voxels *V* in *Z^3* and a positive integer *k*.
+**Given**: A collection of voxels *V* in *Z<sup>3</sup>* and a positive integer *k*.
 
 **Find**: The size of the smallest k-separator for the 26-connectivity graph on *V*. Here, a k-separator is represented by a subset *W* of *V*, such that the removal of W from the connectivity graph results in a graph wherein all components (called clusters) have a size of at most *k*.
 
@@ -41,28 +41,27 @@ Another example is in the article on Figure 2. See [figure2.tsv](data/figure2.ts
 
 To test it with `fgreedy` execute from the command line in `upperbounds` directory after compilation with `make`:
 ```
-$ cd upperbounds && make
-$ ./fgreedy ../data/figure2.tsv -x batch7.cnf  -k10 -T4
-input:../data/figure2.tsv
-Config: k=10 n=-1 N=20.000 S=-2122953728 T=4.00 PS=dflt X0 X1 X2 X2 X5 X10 X20 X30 X40 X50 X60 X70 X90 X100 X110 X130 X150 X200 X300 X400 X500 X600 X800 X1002 I60 I300 I400 I600 I1k X1002 I2k I3k 
-  20. minscore=24    time=0.022
-  22. minscore=23    time=0.101
+$ cd upperbounds && make && cd ../data
+$ ../upperbounds/fgreedy figure2.tsv -k10 -T4
+input:figure2.tsv
+Config: k=10 n=-1 N=20.000 S=750344822 T=4.00 PS=dflt 
+   1. minscore=24    time=0.002
+  16. minscore=23    time=0.008
 minscore:23
 totaltime_sec:4.000
-12249841 cluster insertions(s); 3062390.705 clusters per sec.
+12854297 cluster insertions(s); 3213493.037 clusters per sec.
 outpufiles:fgreedy.log;fgreedy.tsv
 ```
-Here, `-T4` sets the global running time to 4 seconds. The inferred k-separator has the size of 23 and the detailed clustering with separator is in `fgreedy.tsv`.
+Here, `-T4` sets the global running time to 4 seconds. The inferred k-separator has the size of 23 and the detailed clustering with separator is in the default output file [fgreedy.tsv](data/fgreedy.tsv).
 
-To visualize the output from `fgreedy.tsv` in a browser use `pl3d.py` from `plot` directory.
+To visualize the output from [fgreedy.tsv](data/fgreedy.tsv) in a browser use `pl3d.py` from `plot` directory.
 ```
-python3 ../plot/pl3d.py
+$ python3 ../plot/pl3d.py
 ```
 
 ![Visualization](/plot/fig2.png)
 
-
-## Requirements
+## Main programs
 
 - `fgreedy` - computing upper bounds from a single input file 
 
@@ -179,11 +178,16 @@ $ fgreedy @ k90.csv 8 1 2
 
 Use `batch7.sh` using the following exemplary steps:
 
-##### Make a project dir, e.g., myproject and myproject/data and copy csv/tsv files to data dir
+##### Prepare dirs
+
+Go to the TDPClusters directory. Make a project dir `myproject` in home directory and `~/myproject/data` and copy your csv/tsv files to the data dir. Here, we copy just the exemaplary dataset.
 
 ```
-mkdir -p myproject/data
-cp sample_data_from_neurovault/data/*.csv myproject/data 
+$ mkdir -p ~/myproject/data
+$ cp data/sample_data_from_neurovault/*.csv ~/myproject/data
+$ ls ~/myproject/data
+d1002_krft_pos_clusterindex79_clustersize109_kval98.csv  id108_krft_pos_clusterindex208_clustersize166_kval73.csv  id99_kfix_pos_clusterindex144_clustersize29_kval14.csv
+id1006_krft_neg_clusterindex8_clustersize159_kval77.csv   id804_krft_neg_clusterindex82_clustersize48_kval19.csv
 ```
 
 Note that each tsv file should have kvalNUMBER or kNUMBER denoting the k parameter in the filename, e.g., 
@@ -191,45 +195,55 @@ Note that each tsv file should have kvalNUMBER or kNUMBER denoting the k paramet
 
 ##### Initialize project.
 
-- Option A. Using the original location of batch7.sh from the source repositoty.
+- Option A. Using the original location of batch7.sh from the source repository.
 
 ```
-cd fMRI_crit_nodes/125_greedy
-batch7.sh -i myproject
+$ batch7.sh -i myproject
 ```
 
 - Option B. Using the project dir and the script from source repository
 
 ```
-cd myproject
-fMRI_crit_nodes/125_greedy/batch7.sh -i .
+$ cd ~/myproject
+$ [path to TDPClusters]/upperbounds/batch7.sh -i .
 ```
 
 - Option C. By copying all needed files manually.
 
 ```
-cd neurovault
-cp fMRI_crit_nodes/125_greedy/batch7.* fgreedy .
-batch7.sh -i .
+$ cd upperbounds && cp batch7.* fgreedy ~/myproject
+$ cd ~/myproject
+$ batch7.sh -i .
 ```
 
 ##### Execute project 
 
-Here run on 50 jobs with job shuffling. When completed the output dirname provided -E is updated with the score.
+Go to the myproject directory.
+```
+$ cd ~/myproject
+```
+
+Run on 10 jobs with job shuffling, each execution is approx. 240 seconds (-N240). When completed the output dirname provided in `-E` is updated with the total score, i.e., the sum of scores returned by fgreed from all datasets.
 
 ```
-batch7.sh -E N240 -N240 -S -j50
+$ ./batch7.sh -E N240 -N240 -S -j10
 ```
 
-Lower the values in options to have a quicker (and less precise) lower bound inference.
-The result will be stored in N240__SCORE directory.
+Lower the values in options to have a  quicker (and less precise) lower bound inference.
+The result will be stored in N240__TOTALSCORE directory.
 
-##### Continue execution
+E.g., if the total score is 49 then the directory is:
+```
+$ ls N240__*
+N240__49
+```
 
-Again 50 jobs, shuffling, continue from a dir computed in the previous step (replace SCORE with the number).
+##### Continue execution if it was interrupted
+
+Again 10 jobs, shuffling, continue from a dir computed in the previous step. Remember to replace TOTALSCORE with the proper number.
 
 ```
-batch7.sh -E N240__SCORE -N240 -S -j50
+$ ./batch7.sh -E N240__TOTALSCORE -N240 -S -j10
 ```
 
 ##### Print progress summary
