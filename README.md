@@ -41,8 +41,11 @@ Another example is in the article on Figure 2. See [figure2.tsv](data/figure2.ts
 
 To test it with `fgreedy` execute from the command line in `upperbounds` directory after compilation with `make`:
 ```
-$ cd upperbounds && make && cd ../data
-$ ../upperbounds/fgreedy figure2.tsv -k10 -T4
+cd upperbounds && make && cd ../data
+../upperbounds/fgreedy figure2.tsv -k10 -T4
+```
+Sample output:
+```
 input:figure2.tsv
 Config: k=10 n=-1 N=20.000 S=750344822 T=4.00 PS=dflt 
    1. minscore=24    time=0.002
@@ -52,11 +55,12 @@ totaltime_sec:4.000
 12854297 cluster insertions(s); 3213493.037 clusters per sec.
 outpufiles:fgreedy.log;fgreedy.tsv
 ```
+
 Here, `-T4` sets the global running time to 4 seconds. The inferred k-separator has the size of 23 and the detailed clustering with separator is in the default output file [fgreedy.tsv](data/fgreedy.tsv).
 
 To visualize the output from [fgreedy.tsv](data/fgreedy.tsv) in a browser use `pl3d.py` from `plot` directory.
 ```
-$ python3 ../plot/pl3d.py
+python3 ../plot/pl3d.py
 ```
 
 ![Visualization](/plot/fig2.png)
@@ -92,16 +96,7 @@ A single input file is a tsv/csv 3-5-column file:
 
  - lines with occurences of x, y or z are ignored
 
-Examples:
-```
-$ cat k90.csv | head -6
-x,y,z
-7,27,32
-7,28,31
-7,28,32
-7,28,33
-7,28,34
-```
+See examples in ![data directory](/data)
 
 ### The k parameter = the max size of a cluster
 
@@ -115,7 +110,7 @@ The second variant is required for executing `batch7.sh`.
 
 Run `fgreedy` on `k90.csv` with with `k=90`.
 ```
-$ fgreedy k90.csv -x batch7.cnf
+./fgreedy k90.csv -x batch7.cnf
 ```
 
 ### Config files (.cnf) 
@@ -128,7 +123,10 @@ Is a 5-column tsv file in the format described above.
 
 Run `fgreedy` with `k=8`:
 ```
-$ fgreedy k90.csv -x batch7.cnf -k8
+./fgreedy k90.csv -x batch7.cnf -k8
+```
+Sample output
+```
 input:k90.csv
 Config: k=8 ...
 2230. minscore=4599  time=4.835
@@ -144,7 +142,7 @@ outpufiles:fgreedy.log;fgreedy.tsv
 
 Output file:
 ```
-$ cat fgreedy.tsv | head -6
+./cat fgreedy.tsv | head -6
 7       27      32      314     1
 7       28      31      0       1
 7       28      32      314     1
@@ -157,7 +155,7 @@ $ cat fgreedy.tsv | head -6
 
 To get just the score run `fgreedy` as follows
 ```
-fgreedy @ FILE KVAL T N
+./fgreedy @ FILE KVAL T N
 ```
 where
 
@@ -170,7 +168,11 @@ Set N or T to 0 (or negative) to ignore the limit
 
 An example:
 ```
-$ fgreedy @ k90.csv 8 1 2
+./fgreedy @ k90.csv 8 1 2
+```
+
+A sample output could be:
+```
 4616
 ```
 
@@ -183,11 +185,8 @@ Use `batch7.sh` using the following exemplary steps:
 Go to the TDPClusters directory. Make a project dir `myproject` in home directory and `~/myproject/data` and copy your csv/tsv files to the data dir. Here, we copy just the exemaplary dataset.
 
 ```
-$ mkdir -p ~/myproject/data
-$ cp data/sample_data_from_neurovault/*.csv ~/myproject/data
-$ ls ~/myproject/data
-d1002_krft_pos_clusterindex79_clustersize109_kval98.csv  id108_krft_pos_clusterindex208_clustersize166_kval73.csv  id99_kfix_pos_clusterindex144_clustersize29_kval14.csv
-id1006_krft_neg_clusterindex8_clustersize159_kval77.csv   id804_krft_neg_clusterindex82_clustersize48_kval19.csv
+mkdir -p ~/myproject/data
+cp data/sample_data_from_neurovault/*.csv ~/myproject/data
 ```
 
 Note that each tsv file should have kvalNUMBER or kNUMBER denoting the k parameter in the filename, e.g., 
@@ -198,35 +197,35 @@ Note that each tsv file should have kvalNUMBER or kNUMBER denoting the k paramet
 - Option A. Using the original location of batch7.sh from the source repository.
 
 ```
-$ batch7.sh -i myproject
+./batch7.sh -i myproject
 ```
 
 - Option B. Using the project dir and the script from source repository
 
 ```
-$ cd ~/myproject
-$ [path to TDPClusters]/upperbounds/batch7.sh -i .
+cd ~/myproject
+[path to TDPClusters]/upperbounds/batch7.sh -i .
 ```
 
 - Option C. By copying all needed files manually.
 
 ```
-$ cd upperbounds && cp batch7.* fgreedy ~/myproject
-$ cd ~/myproject
-$ batch7.sh -i .
+cd upperbounds && cp batch7.* fgreedy ~/myproject
+cd ~/myproject
+./batch7.sh -i .
 ```
 
 ##### Execute project 
 
 Go to the myproject directory.
 ```
-$ cd ~/myproject
+cd ~/myproject
 ```
 
 Run on 10 jobs with job shuffling, each execution is approx. 240 seconds (-N240). When completed the output dirname provided in `-E` is updated with the total score, i.e., the sum of scores returned by fgreed from all datasets.
 
 ```
-$ ./batch7.sh -E N240 -N240 -S -j10
+./batch7.sh -E N240 -N240 -S -j10
 ```
 
 Lower the values in options to have a  quicker (and less precise) lower bound inference.
@@ -234,7 +233,7 @@ The result will be stored in N240__TOTALSCORE directory.
 
 E.g., if the total score is 49 then the directory is:
 ```
-$ ls N240__*
+ls N240__*
 N240__49
 ```
 
@@ -243,19 +242,19 @@ N240__49
 Again 10 jobs, shuffling, continue from a dir computed in the previous step. Remember to replace TOTALSCORE with the proper number.
 
 ```
-$ ./batch7.sh -E N240__TOTALSCORE -N240 -S -j10
+./batch7.sh -E N240__TOTALSCORE -N240 -S -j10
 ```
 
 ##### Print progress summary
 
 ```
-batch7.sh -P N240
+./batch7.sh -P N240
 ```
 
 ##### Merge project to release datadir
 
 ```
-batch7.sh -m N240__*
+./batch7.sh -m N240__*
 ```
 
 For example, if the total score, i.e., the sum of all upper bounds, is SCORE=49, then in `release__49` dir:
