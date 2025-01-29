@@ -23,17 +23,20 @@
 #define DEBUG_RESAMPLE
 #define DEBUG_RESAMPLE2
 #define DEBINF printf("\nIn %s:%s:%d:",__func__,__FILE__,__LINE__)
-
 #endif
 
-int nghvect[NEIGHBOURHOODSIZE][3] = {
-	{0,0,1}, 	{0,0,-1}, 	 {0,1,0}, 	{1,0,0}, 	{-1,0,0}, 	{0,-1,0}, 
+#define MAXNGHSIZE 26
+
+int nghvect[MAXNGHSIZE][3] = {
+	{0,0,1}, 	{0,0,-1}, 	 {0,1,0}, 	{1,0,0}, 	{-1,0,0}, 	{0,-1,0},  // 6
 	{0,1,1}, 	{0,1,-1},  	 {0,-1,1}, 	{0,-1,-1}, 	{1,0,1}, 	{1,0,-1},
-	{-1,0,1}, 	{-1,0,-1},   {1,1,0}, 	{1,-1,0}, 	{-1,1,0}, 	{-1,-1,0},
-	{1,-1,1}, 	{1,1,1}, 	{1,1,-1}, 	{1,-1,-1}, 	{-1,1,1}, 	{-1,1,-1}, 	{-1,-1,1}, 	{-1,-1,-1} };
+	{-1,0,1}, 	{-1,0,-1},   {1,1,0}, 	{1,-1,0}, 	{-1,1,0}, 	{-1,-1,0}, // 18
 
-int nbidx[NEIGHBOURHOODSIZE] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25};
+	{1,-1,1}, 	{1,1,1}, 	{1,1,-1}, 	{1,-1,-1}, 	{-1,1,1}, 	{-1,1,-1}, 	{-1,-1,1}, 	{-1,-1,-1}  // 26
 
+};
+
+int nbidx[MAXNGHSIZE] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25};
 
 char *verbose = "";
 
@@ -2700,8 +2703,24 @@ kseparatorupperbound(
   	int argc = 0;
   	argv[argc++]=strdup("fgreedy");
   	argv[argc++]=strdup(inputxyzfilename);
+
+
   	argv[argc++]=strdup("-x");
-  	argv[argc++]=strdup(BATCH7CNF);
+
+#define SIMPLIFIEDCNF "smp.cnf"
+
+	FILE *out = fopen(SIMPLIFIEDCNF, "r"); 
+	if (!out)
+	{
+		// Read default if no smp.cnf
+		argv[argc++]=strdup(BATCH7CNF);				
+	}
+	else
+	{
+		fclose(out);
+		// Use smp.cnf
+		argv[argc++]=SIMPLIFIEDCNF;
+	}
 
 	argv[argc++]=strdup("-k");  	
 	sprintf(buf,"%d",kval);
@@ -2734,13 +2753,14 @@ main (int argc, char **argv)
 {	
   	// run simplified variant for testing kseparatorupperbound
   	// fgreedy @ k90.csv 90 0 10
+
   	if ((argc==6) && (argv[1][0]=='@'))
   	{
   		// printf("Testing kseparatorupperbound ... ");
   		// fflush(stdout);
   		// convert 4 args 
   		// todo check correctness
-  		long separatorsize = kseparatorupperbound(argv[2],atoi(argv[3]),atof(argv[4]),atof(argv[5]));
+  		long separatorsize = kseparatorupperbound(argv[2], atoi(argv[3]), atof(argv[4]), atof(argv[5]));
   		printf("%ld\n",separatorsize);
   		exit(0);
   	}

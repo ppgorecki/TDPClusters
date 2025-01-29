@@ -92,7 +92,13 @@ typedef short int voxelid;
 #define MAXY 128
 #define MAXZ 128
 
+
+#ifndef NEIGHBOURHOODSIZE
+
 #define NEIGHBOURHOODSIZE 26
+
+#endif
+
 
 extern int	writeoutputfiles;
 extern int supressstdout;

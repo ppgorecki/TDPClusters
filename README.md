@@ -184,6 +184,8 @@ A sample output could be:
 4616
 ```
 
+In simplified mode, ./smp.cnf config file is used if present in the current directory; otherwise a predefined set of parameters embedded into the program copied of batch7.cnf.
+
 ### Processing (large) collections of files
 
 Use `batch7.sh` using the following exemplary steps:
@@ -271,3 +273,14 @@ For example, if the total score, i.e., the sum of all upper bounds, is SCORE=49,
 - 49.tsv - two-column summary `inputfile` `upperbound` 
 - dtstats.tsv - summary of upper bounds for all all non-cubetest datasets
 - scstats.tvs - summary of upper bounds for all input datasets
+
+
+
+### Connectivity variants
+
+For the 18-connectivity problem compile and use fgreedy18.
+```
+make fgreedy18
+```
+
+Similarly, use fgreedy6 for 6-connectivity.
