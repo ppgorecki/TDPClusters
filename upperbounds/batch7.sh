@@ -245,13 +245,12 @@ then
 
     [[ -f $file ]] || continue
 
-    basenamedir=$( basename ${file::-4} )
-    #datasetdir="$resultsdir"$basenamedir 
-    #workdir=$tmplogs/$basenamedir
-    [[ $2 = d ]] && mkdir -p $datasetdir        
-    if ! $FGREEDY -c $file -vTq -l /tmp/x.log -b /tmp/$$.tsv
+     
+    basenamedir=$( echo $(basename $file) | sed 's/....$//'  )
+    
+    if ! $FGREEDY -c -vTq -l /tmp/x.log -b /tmp/$$.tsv $file
     then
-      >&2 echo "Checking failed: fgreedy -c -vT $file"
+      echo "Checking failed: fgreedy -c -vT $file" >&2
       exit -1
     fi    
     set $( cat /tmp/$$.tsv )
@@ -267,7 +266,7 @@ then
       cube=0      
     fi
     echo -e "$kval\t$size\t$basenamedir\t$file\t$cube"
-  done | sort -r -k2 -n > $INDEX
+  done  | sort -r -k2 -n > $INDEX
 
   echo "$( cat $INDEX | wc -l )" datasets
 
@@ -317,10 +316,11 @@ for s in range(1,$SIDE):
         if opt>1 and voxels<$LIMIT: 
           print(f'cube_s{s}_c{c1}x{c2}x{c3}_C{pnvx}_v{voxels}_opt{opt}_kval{k}',s,c1,c2,c3,pn,pnvx,voxels,opt,k)
 EOF
+  FGREEDY=$( realpath fgreedy )
 
   cat cubetest.tsv | while read cubefile s c1 c2 c3 pn pnvx voxels opt k
   do    
-    if ! fgreedy ":$pnvx" -k$k -t /tmp/$cubefile.tsv -T0.0000001
+    if ! $FGREEDY -k$k -t /tmp/$cubefile.tsv -T0.0000001 ":$pnvx"
     then
       echo fgreedy error
       exit -1
@@ -394,12 +394,13 @@ function gensummary()
 
 function  getminscore()
 {
-  ls [0-9]*.tsv | grep -o -P "^\d+"  | sort -n | head -1    
+  #ls [0-9]*.tsv | grep -o -P "^\d+"  | sort -n | head -1    
+   ls [0-9]*.tsv | grep -E "^[0-9]+"  | sed -E 's/^([0-9]+).*/\1/' | sort -n | head -1 
 }
 
 function  getminfile()
 {
-  ls "$1"*.tsv -t -r | grep "^$1[^0-9]" | head -1
+  ls -t -r "$1"*.tsv | grep "^$1[^0-9]" | head -1
 }
 
 if [[ $heurerroranalysis ]]
@@ -500,7 +501,7 @@ then
             MINFILE=$( realpath $MINFILE )
             echo -n $( basename $f) $MINSCORE ' Cands: ' 
 
-            if ! $fgreedy -c $MINFILE -k$k -vq > /dev/null
+            if ! $fgreedy -c  -k$k -vq $MINFILE > /dev/null
             then
               echo $MINFILE check error
               exit -1
@@ -522,7 +523,7 @@ then
             MINSCORE2=$( getminscore )
             MINFILE2=$( getminfile $MINSCORE2 )
                         
-            if ! $fgreedy -c $MINFILE2 -k$k > /dev/null
+            if ! $fgreedy -c -k$k $MINFILE2 > /dev/null
             then
               echo $MINFILE2 check error
               exit -1
@@ -609,8 +610,8 @@ then
     if cd $RDIR/$b >/dev/null
     then
       MINSCORE=$( ls [0-9]*.tsv | grep -o -P "^\d+"  | sort -n | head -1 )
-      MINFILE=$( ls "$MINSCORE"*.tsv -t -r | grep "^$MINSCORE[^0-9]" | head -1 )
-      MINFILES=$( ls "$MINSCORE"*.tsv -t -r | grep "^$MINSCORE[^0-9]" )
+      MINFILE=$(  ls -t -r "$MINSCORE"*.tsv | grep "^$MINSCORE[^0-9]" | head -1 )
+      MINFILES=$( ls -t -r "$MINSCORE"*.tsv | grep "^$MINSCORE[^0-9]" )
 
       for i in *.tsv 
       do

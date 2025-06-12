@@ -283,24 +283,44 @@ make fgreedy18
 
 Similarly, use fgreedy6 for 6-connectivity.
 
+
+### batch7 usage example 
+
+```
+    # in TDPClusters/upperbounds directory
+    ./batch7.sh -i destdir             # initalize directory with destdir/data
+    cd destdir     
+    ./batch7.sh -E work50 -N50         # execute with -N50
+    ./batch7.sh -E work6 -N6           # execute with -N6
+    ./batch7.sh -m work*               # merge to release 
+```
+
 ### Cubetest 
 
 To assess the level of errors perform cubetest (see the article for more details). Cubetest requires generation of cubes on which the upper bound is estimated
 
 ```
     # if started in TDPClusters/upperbounds
-    batch7.sh -i $destdir            # initalize directory ($destdir/data should be present)
-    cd $destdir    
-    batch7.sh -c "5,5,5,5,3000"      # prep some small cubetest; see batch7.sh for option details
-    batch7.sh -i .                   # reinitialize 
-    batch7.sh -E work6 -N6           # process; execute with -N6 (just for simple testing)
-    batch7.sh -m work*               # merge to release 
-    batch7.sh -C release*            # make error report from cubedata
+    batch7.sh -i destdir             # initalize directory with destdir/data (maybe empty)
+    cd destdir    
+    ./batch7.sh -c "5,5,5,5,3000"      # prep some small cubetest; see batch7.sh for option details
+    ./batch7.sh -i .                   # reinitialize 
+    ./batch7.sh -E work6 -N6           # process; execute with -N6 (just for simple testing)
+    ./batch7.sh -m work*               # merge to release 
+    ./batch7.sh -C release*            # make error report from cubedata
 ```
 
 Cubetest should be run jointly with the data to preserve the same setting of parameters.
-The last command generates a python script to visualize the output (seaborn package required).
+The last command generates a python script to visualize the output (use with seaborn python package).
 
 ### Mac OS command-line options
 
 Due to limits of getopt function at Mac OS, remember to put all non-option arguments at the end of the command line.
+
+To install parallel. First, install homebrew and then run 
+
+``` brew install parallel ```
+
+Then, add ``` export PATH="/opt/homebrew/bin:$PATH" ```
+to .bashrc and .zshrc files.
+
