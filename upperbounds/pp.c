@@ -474,17 +474,17 @@ void usage(config *cnf)
 "Examples:\n"
 "\n"
 "Run using batch7.cnf and print input graph stats\n"
-"\tfgreedy k657.csv -x batch7.cnf -vs -k657\n\n"
+"\tfgreedy -x batch7.cnf -vs -k657 k657.csv\n\n"
 
 "Run for 10 seconds\n"
-"\tfgreedy k657.csv -x batch7.cnf -vs -k657 -T10\n\n"
+"\tfgreedy -x batch7.cnf -vs -k657 -T10 k657.csv\n\n"
 
 "As above but store log and tsv in project directory (here k657).\n The score will be encoded in the filename.\n"
 
-"\tfgreedy k657.csv -x batch7.cnf -vsx -k657 -T10\n\n"
+"\tfgreedy -x batch7.cnf -vsx -k657 -T10 k657.csv\n\n"
 
 "As above but continue from the best clustering found the directory k657.\n Output written to dir k657\n"
-"\tfgreedy k657.csv -x batch7.cnf -vsx -k657 -T10 -C- \n\n"
+"\tfgreedy -x batch7.cnf -vsx -k657 -T10 -C- k657.csv\n\n"
 
 "Simplified runs:\n"
 " fgreedy @ FILE KVAL T N\n"
@@ -497,7 +497,7 @@ void usage(config *cnf)
 "fgreedy @ k90.csv 90 0 2\n"
 
 "\nRun using batch7.cnf and print PS stats (quite long in batch7.cnf)\n"
-"\tfgreedy k657.csv -x batch7.cnf -vGs -k657\n\n"
+"\tfgreedy -x batch7.cnf -vGs -k657 k657.csv\n\n"
 
 ,
 cnf->noimprovementtimethreshold,
