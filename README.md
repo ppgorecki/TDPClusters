@@ -45,7 +45,7 @@ Another example is in the article on Figure 2. See [figure2.tsv](data/figure2.ts
 Run `fgreedy` the command line after compilation with `make`:
 ```
 cd upperbounds && make && cd ../data
-../upperbounds/fgreedy figure2.tsv -k10 -T4
+../upperbounds/fgreedy -k10 -T4 figure2.tsv
 ```
 Sample output:
 ```
@@ -81,7 +81,7 @@ Run `fgreedy -h` or `batch7.sh` for detailed help.
 
 Gnu compiler is needed for `fgreedy`.
 
-`batch7.sh` is a bash scrupt that requires `gnu parallel` and `env_parallel`
+`batch7.sh` is a bash script that requires `gnu parallel` and `env_parallel`
 
 ## Compilation 
 
@@ -113,16 +113,15 @@ If the `-k` option is used to explicitly set the value of k, it takes precedence
 
 For example:
 ```
-./fgreedy k90.csv -x batch7.cnf
+./fgreedy -x batch7.cnf k90.csv
 ```
 This command runs fgreedy on the input file `k90.csv` with a specified value of `k=90`. 
 
 However, in 
 ```
-./fgreedy k90.csv -x batch7.cnf -k8
+./fgreedy -x batch7.cnf -k8 k90.csv
 ```
 The value of k is set to 8.
-
 
 
 ### Output file
@@ -131,7 +130,7 @@ Is a 5-column tsv file in the format described above.
 
 Run `fgreedy` with `k=8`:
 ```
-./fgreedy k90.csv -x batch7.cnf -k8
+./fgreedy -x batch7.cnf -k8 k90.csv
 ```
 Sample output
 ```
@@ -196,7 +195,7 @@ Go to the TDPClusters directory. Make a project dir `myproject` in home director
 
 ```
 mkdir -p ~/myproject/data
-cp data/sample_data_from_neurovault/*.csv ~/myproject/data
+cp data/neurovault/data/*.csv ~/myproject/data
 ```
 
 Note that each tsv file should have kvalNUMBER or kNUMBER denoting the k parameter in the filename, e.g., 
@@ -207,7 +206,7 @@ Note that each tsv file should have kvalNUMBER or kNUMBER denoting the k paramet
 - Option A. Using the original location of batch7.sh from the source repository.
 
 ```
-./batch7.sh -i myproject
+./batch7.sh -i ~/myproject
 ```
 
 - Option B. Using the project dir and the script from source repository
@@ -275,7 +274,6 @@ For example, if the total score, i.e., the sum of all upper bounds, is SCORE=49,
 - scstats.tvs - summary of upper bounds for all input datasets
 
 
-
 ### Connectivity variants
 
 For the 18-connectivity problem compile and use fgreedy18.
@@ -284,3 +282,25 @@ make fgreedy18
 ```
 
 Similarly, use fgreedy6 for 6-connectivity.
+
+### Cubetest 
+
+To assess the level of errors perform cubetest (see the article for more details). Cubetest requires generation of cubes on which the upper bound is estimated
+
+```
+    # if started in TDPClusters/upperbounds
+    batch7.sh -i $destdir            # initalize directory ($destdir/data should be present)
+    cd $destdir    
+    batch7.sh -c "5,5,5,5,3000"      # prep some small cubetest; see batch7.sh for option details
+    batch7.sh -i .                   # reinitialize 
+    batch7.sh -E work6 -N6           # process; execute with -N6 (just for simple testing)
+    batch7.sh -m work*               # merge to release 
+    batch7.sh -C release*            # make error report from cubedata
+```
+
+Cubetest should be run jointly with the data to preserve the same setting of parameters.
+The last command generates a python script to visualize the output (seaborn package required).
+
+### Mac OS command-line options
+
+Due to limits of getopt function at Mac OS, remember to put all non-option arguments at the end of the command line.

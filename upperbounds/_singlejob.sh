@@ -32,7 +32,7 @@ else
 
 	echo -e "$RED" "New job: $( basename $FGREEDY ) $file -x $CONFIG $GREEDYOPT -b stats/$id.tsv -p$basenamedir -C$basenamedir -t $lbn.tsv.tmp -l $lbn.log.tmp -vtTxp$fgreedy_addverbose $SOPT $NC"
 
-	if ! $FGREEDY $file -x $CONFIG $GREEDYOPT -b stats/$id.tsv -p$basenamedir -C$basenamedir -t $lbn.tsv.tmp -l $lbn.log.tmp -vtTxp$fgreedy_addverbose $SOPT 2> $lbn.log.err
+	if ! $FGREEDY -x $CONFIG $GREEDYOPT -b stats/$id.tsv -p$basenamedir -C$basenamedir -t $lbn.tsv.tmp -l $lbn.log.tmp -vtTxp$fgreedy_addverbose $SOPT $file 2> $lbn.log.err
 	then
 		[[ -f $stopfile ]] && exit -1 
 
