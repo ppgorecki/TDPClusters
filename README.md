@@ -1,6 +1,6 @@
 # ceTDP-heur
 
-C implementation of calculating **approximate** lower bounds for TDN (True Discovery Number) and TDP (True Discovery Proportion) in neuroimaging cluster-based inference.
+C implementation of estimating the lower bound for TDN (True Discovery Number) and TDP (True Discovery Proportion) in neuroimaging cluster-based inference.
 
 ## Overview
 
@@ -31,7 +31,7 @@ This implementation is based on:
 | `data/` | Example input data (e.g., `figure2.tsv` for Figure 2 in the paper) |
 | `plot/` | Scripts for visualizing clustering results |
 | `cubetest/` | Heuristic cube test described in the paper |
-| `lowerbounds` | Python library (`lowerbounds.py`) for computing conservative lower bounds based on Lemma 5 in the paper |
+| `lowerbounds` | Python library (`lowerbounds.py`) for computing conservative lower bounds based on Lemma 5 in the paper (ceTDP-cons) |
 
 ## Quick Start
 
@@ -67,7 +67,7 @@ make
 A single integer: the estimated TDN lower bound.
 
 
-# Fgreedy - upper bounds
+# Fgreedy
 
 `fgreedy` is a computer program written in C to compute the upper bounds for the k-separator problem on 
 26-connectivity graphs defined in the 3-dimensional grid.
