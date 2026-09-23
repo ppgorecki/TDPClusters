@@ -1,4 +1,4 @@
-# ceTDP-appr
+# ceTDP-heur
 
 C implementation of calculating **approximate** lower bounds for TDN (True Discovery Number) and TDP (True Discovery Proportion) in neuroimaging cluster-based inference.
 
