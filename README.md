@@ -1,12 +1,12 @@
 # ceTDP-heur
 
-C implementation of estimating the lower bound for TDN (True Discovery Number) and TDP (True Discovery Proportion) in neuroimaging cluster-based inference.
+C implementation of **ceTDP-heur** for heuristic estimation of the TDN (True Discovery Number) lower bound and the corresponding TDP (True Discovery Proportion) lower bound in neuroimaging cluster-based inference.
 
 ## Overview
 
-This tool quantifies how much of your detected activation is truly non-null using a **two-phase heuristic algorithm** that provides approximate (and potentially tighter) lower bounds.
+This tool quantifies how much of your detected activation is truly non-null using a **two-phase heuristic algorithm** that provides heuristic estimates of the TDN lower bound, which may be tighter than the conservative bound.
 
-After computing a lower bound for TDN, the corresponding TDP bound is:
+After obtaining a heuristic estimate of the TDN lower bound, the corresponding TDP lower-bound estimate is:
 
 **TDP = TDN / |S|**
 
@@ -64,7 +64,7 @@ make
 
 ### Output
 
-A single integer: the estimated TDN lower bound.
+A single integer: the heuristic estimate of the TDN lower bound.
 
 
 # Fgreedy
