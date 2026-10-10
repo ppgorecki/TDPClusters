@@ -1,24 +1,73 @@
+# ceTDP-heur
 
-# TDP Clusters
+C implementation of **ceTDP-heur** for heuristic estimation of the TDN (True Discovery Number) lower bound and the corresponding TDP (True Discovery Proportion) lower bound in neuroimaging cluster-based inference.
 
-Software for computing lower and upper bounds for the k-separator problem.
+## Overview
 
-Cluster extent inference revisited: quantification and localisation of brain activity 
-Jelle J Goeman, Paweł Górecki, Ramin Monajemi, Xu Chen, Thomas E Nichols, Wouter Weeda,
-Journal of the Royal Statistical Society Series B: Statistical Methodology, Volume 85, Issue 4, September 2023, Pages 1128–1153, https://doi.org/10.1093/jrsssb/qkad067
+This tool quantifies how much of your detected activation is truly non-null using a **two-phase heuristic algorithm** that provides heuristic estimates of the TDN lower bound, which may be tighter than the conservative bound.
 
-## Directories 
+After obtaining a heuristic estimate of the TDN lower bound, the corresponding TDP lower-bound estimate is:
 
-Main directories:
-- `lowerbouds` - a python library `lowerbounds.py` for computing lower bounds based on Lemma 5 from the article
-- `upperbounds` - `fgreedy`  written in C to compute upper bounds
+**TDP = TDN / |S|**
 
-Other directories:
-- `data` - exemplary input data (e.g., figure2.tsv data from the Figure 2)
-- `plot` - plotting fgreedy output clusterings
-- `cubetest` - heuristic cube test from the article
+where |S| is the size of the selected region.
 
-# Fgreedy - upper bounds
+> **Note:** It is based on solving a k-separator problem, i.e., finding the minimum number of nodes whose removal splits a graph into connected components of size at most *k*.
+
+## Methods
+
+This implementation is based on:
+
+> **Cluster extent inference revisited: quantification and localisation of brain activity**,
+> Jelle J Goeman, Paweł Górecki, Ramin Monajemi, Xu Chen, Thomas E Nichols, and Wouter Weeda,
+> *Journal of the Royal Statistical Society Series B: Statistical Methodology*, Volume 85, Issue 4, September 2023, Pages 1128–1153
+> https://doi.org/10.1093/jrsssb/qkad067
+
+## Directories
+
+| Directory | Description |
+|-----------|-------------|
+| `upperbounds/` | Main C implementation (`fgreedy`) |
+| `data/` | Example input data (e.g., `figure2.tsv` for Figure 2 in the paper) |
+| `plot/` | Scripts for visualizing clustering results |
+| `cubetest/` | Heuristic cube test described in the paper |
+| `lowerbounds` | Python library (`lowerbounds.py`) for computing conservative lower bounds based on Lemma 5 in the paper (ceTDP-cons) |
+
+## Quick Start
+
+```bash
+cd upperbounds
+make
+./fgreedy -k<k-value> <input>
+```
+
+## Example
+
+```bash
+./fgreedy -k10 ../data/figure2.tsv
+```
+
+### Arguments
+
+- `-k`: Minimum significant cluster size minus 1 (output from Stage 1)
+  
+- `input`: A CSV/TSV file with voxel coordinates (`x`, `y`, `z`) for a single region (derived from Stage 1)
+  
+  Example of input format:
+  ```bash
+  x,y,z
+  26,72,24
+  27,72,24
+  30,72,24
+  ...
+  ```
+
+### Output
+
+A single integer: the heuristic estimate of the TDN lower bound.
+
+
+# Fgreedy
 
 `fgreedy` is a computer program written in C to compute the upper bounds for the k-separator problem on 
 26-connectivity graphs defined in the 3-dimensional grid.
